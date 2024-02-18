@@ -48,13 +48,14 @@ def sanitize_url(url):
 # Loads the current project-data from the kickstarter api
 def retrieve_data(project_url):
     url = project_url + "stats.json?v=1"
-    data = requests.get(url)
+    headers = {'User-Agent': 'Kickstarter Prometheus Exporter'}
+    data = requests.get(url, headers=headers)
     return json.load(StringIO(data.text))
 
 
 # formats project-data into prometheus-readable format
 def format_data(data, name):
-    return "{}\n{}".format(format_gauge(name + "_money_total", data['project']['pledged'],
+    return "{}\n{}\n".format(format_gauge(name + "_money_total", data['project']['pledged'],
                                         "the amount of raised money of " + name),
                            format_gauge(name + "_backers_total", data['project']['backers_count'],
                                         "the amount of backers of " + name))
